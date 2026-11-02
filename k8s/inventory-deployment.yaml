@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory
+  labels:
+    app: inventory
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inventory
+  template:
+    metadata:
+      labels:
+        app: inventory
+    spec:
+      containers:
+        - name: inventory
+          image: python:3.12-slim
+          command: ["python3", "/app/inventory.py"]
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: inventory-code
+              mountPath: /app
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 5000
+            initialDelaySeconds: 2
+            periodSeconds: 2
+      volumes:
+        - name: inventory-code
+          configMap:
+            name: inventory-code

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+  labels:
+    app: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: python:3.12-slim
+          command: ["python3", "/app/client.py"]
+          volumeMounts:
+            - name: client-code
+              mountPath: /app
+      volumes:
+        - name: client-code
+          configMap:
+            name: client-code
